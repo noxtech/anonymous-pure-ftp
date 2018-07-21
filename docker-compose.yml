@@ -2,7 +2,7 @@ version: '2'
 
 services:
   ftp:
-    build: .
+    image: noxtech/anonymous-pure-ftp
     container_name: anonymous-ftp
     ports:
       - "21:21"
