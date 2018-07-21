@@ -38,7 +38,7 @@ RUN apt-mark hold pure-ftpd pure-ftpd-common
 # setup ftpgroup, ftpuser and anonymous ftp
 RUN groupadd ftpgroup
 RUN useradd -g ftpgroup -d /home/ftpusers -s /dev/null ftpuser
-RUN useradd -d /home/ftp -s /dev/null ftp
+RUN useradd -g ftpgroup -d /home/ftpusers/shared -s /dev/null ftp
 
 # configure rsyslog logging
 RUN echo "" >> /etc/rsyslog.conf && \
@@ -50,11 +50,6 @@ RUN echo "" >> /etc/rsyslog.conf && \
 COPY run.sh /run.sh
 RUN chmod u+x /run.sh
 
-#USER ftp
-#ENV HOME /home/ftp
-#RUN mkdir -p /home/ftp/incoming
-#RUN chown ftp /home/ftp/incoming
-
 # default publichost, you'll need to set this for passive support
 ENV PUBLIC_HOST localhost
 ENV MAX_USERS 20
@@ -64,6 +59,6 @@ ENV MAX_CONNECTIONS 4
 VOLUME ["/home/ftpusers", "/etc/pure-ftpd/passwd", "/home/ftp"]
 
 # startup
-CMD /run.sh -0 -c $MAX_CONNECTIONS -C $MAX_USERS -l puredb:/etc/pure-ftpd/pureftpd.pdb -j -R -P $PUBLIC_HOST -A -Z -H -4 -X -x -i -b
+CMD /run.sh -0 -c $MAX_CONNECTIONS -C $MAX_USERS -l puredb:/etc/pure-ftpd/pureftpd.pdb -j -R -P $PUBLIC_HOST -A -Z -H -4 -X -x -b -i
 
 EXPOSE 21 30000-30039

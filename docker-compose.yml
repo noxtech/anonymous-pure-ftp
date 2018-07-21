@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  ftp:
+    build: .
+    container_name: anonymous-ftp
+    ports:
+      - "21:21"
+      - "30000-30039:30000-30039"
+    volumes:
+      - "/srv/store/docker-volumes/ftp/data/anonymous:/home/ftp/"
+      - "/srv/store/docker-volumes/ftp/data/ftpusers:/home/ftpusers/"
+      - "/srv/store/docker-volumes/ftp/passwd:/etc/pure-ftpd/passwd"
+#      - "/srv/store/docker-volumes/ftp/ssl:/etc/ssl/private/"
+    environment:
+      PUBLIC_HOST: "192.168.1.100"
+#      ADDED_FLAGS: "--tls=2"
+    restart: unless-stopped
