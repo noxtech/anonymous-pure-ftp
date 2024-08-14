@@ -4,15 +4,13 @@ services:
   ftp:
     image: noxtech/anonymous-pure-ftp
     container_name: anonymous-ftp
+    environment:
+      - FTP_PASSIVE_PORTS=40000:40039
     ports:
       - "21:21"
-      - "30000-30039:30000-30039"
+      - "40000-40039:40000-40039"
     volumes:
       - "/srv/store/docker-volumes/ftp/data/anonymous:/home/ftp/"
       - "/srv/store/docker-volumes/ftp/data/ftpusers:/home/ftpusers/"
       - "/srv/store/docker-volumes/ftp/passwd:/etc/pure-ftpd/passwd"
-#      - "/srv/store/docker-volumes/ftp/ssl:/etc/ssl/private/"
-    environment:
-      PUBLIC_HOST: "192.168.1.100"
-#      ADDED_FLAGS: "--tls=2"
     restart: unless-stopped
