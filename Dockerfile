@@ -16,6 +16,8 @@ COPY start.sh /start.sh
 
 RUN chmod +x start.sh
 
+VOLUME ["/data"]
+
 ENTRYPOINT ["/init"]
 
 CMD ["/start.sh"]
