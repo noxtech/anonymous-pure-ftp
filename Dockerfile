@@ -1,4 +1,7 @@
-FROM jedisct1/pure-ftpd
+FROM instrumentisto/pure-ftpd:noxtech
+
+RUN mkdir -p /etc/pure-ftpd \
+    && mv /etc/pure-ftpd.conf /etc/pure-ftpd/pure-ftpd.conf
 
 RUN mkdir -p /data/shared \
     && mkdir -p /data/virtualusers \
@@ -9,7 +12,9 @@ ENV FTP_PASSIVE_PORTS="30000 30009" \
     FTP_MAX_CLIENTS_NO=50 \
     FTP_MAX_CLIENTS_PER_IP=8 \
     FTP_MAX_IDLE_TIME=15 \
-    PER_USER_LIMITS=3:20
+    PER_USER_LIMITS=3:20 \
+    PURE_PASSWDFILE=/etc/pure-ftpd/pureftpd.passwd \
+    PURE_DBFILE=/etc/pure-ftpd/pureftpd.pdb
 
 COPY start.sh / \
     set-permissions.sh /
