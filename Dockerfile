@@ -1,22 +1,28 @@
-FROM instrumentisto/pure-ftpd
+FROM jedisct1/pure-ftpd
 
-RUN adduser -D -h /data/anonymous -s /sbin/nologin anonymous \
-    && mkdir -p /data/anonymous/shared \
-    && chown -R anonymous:anonymous /data/anonymous \
-    && chmod 755 /data/anonymous \
-    && ln -s /data/anonymous/shared /var/lib/ftp \
-    && chown -R ftp:ftp /var/lib/ftp
+RUN mkdir -p /data/shared \
+    && mkdir -p /data/virtualusers \
+    && adduser -D -u 101 -g 91 -h /data/virtualusers -s /sbin/nologin virtualusers
+#    && echo hi
 
-ENV FTP_PASSIVE_PORTS="30000 30009"
-ENV FTP_MAX_CLIENTS_NO=50
-ENV FTP_MAX_CLIENTS_PER_IP=8
-ENV FTP_MAX_IDLE_TIME=15
+ENV FTP_PASSIVE_PORTS="30000 30009" \
+    FTP_MAX_CLIENTS_NO=50 \
+    FTP_MAX_CLIENTS_PER_IP=8 \
+    FTP_MAX_IDLE_TIME=15 \
+    PER_USER_LIMITS=3:20
 
-COPY start.sh /start.sh
+COPY start.sh / \
+    set-permissions.sh /
+RUN chmod +x start.sh \
+    && chmod +x set-permissions.sh \
+# update properties
+    && sed -i "s/^#\sPureDB\s*\/etc\/pureftpd.pdb/PureDB \/etc\/pure-ftpd\/pureftpd.pdb/" "/etc/pure-ftpd/pure-ftpd.conf" \
+    && sed -i "s/^MinUID.*/MinUID 90/" "/etc/pure-ftpd/pure-ftpd.conf" \
+# setup pureftpd user db
+    && touch /etc/pure-ftpd/pureftpd.passwd \
+    && pure-pw mkdb
 
-RUN chmod +x start.sh
-
-VOLUME ["/data"]
+VOLUME ["/data", "/etc/pure-ftpd"]
 
 ENTRYPOINT ["/init"]
 
