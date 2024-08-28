@@ -3,11 +3,14 @@ version: '2'
 services:
   ftp:
     image: noxtech/anonymous-pure-ftp
+    container_name: gameserver-ftp
     environment:
       - FTP_PASSIVE_PORTS=40000 40039
     ports:
       - "21:21"
       - "40000-40039:40000-40039"
-    volumes:
-      - /data/anonymous/shared
     restart: unless-stopped
+    volumes:
+      - "./data:/data"
+      - "./etc/pure-ftpd/:/etc/pure-ftpd/"
+
